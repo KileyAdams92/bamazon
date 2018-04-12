@@ -1,0 +1,23 @@
+{
+  "name": "bamazon",
+  "version": "1.0.0",
+  "description": "App similar to Amazon",
+  "main": "bamazonCustomer.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/KileyAdams92/bamazon.git"
+  },
+  "author": "Kiley Adams",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/KileyAdams92/bamazon/issues"
+  },
+  "homepage": "https://github.com/KileyAdams92/bamazon#readme",
+  "dependencies": {
+    "inquirer": "^5.2.0",
+    "mysql": "^2.15.0"
+  }
+}
