@@ -1,5 +1,6 @@
 var inquirer = require("inquirer");
 var mysql = require("mysql");
+var cTable = require("console.table");
 
 var connection = mysql.createConnection({
   host: "localhost",
@@ -22,11 +23,14 @@ function runApplication(items) {
 }
 
 function readProducts() {
-  console.log("Selecting all products...\n");
+  console.log("Opening Kiley's Store...\n");
   connection.query("SELECT * FROM products", function(err, res) {
     if (err) throw err;
     // Log all results of the SELECT statement
-    console.log(res);
+    console.table(res);
+    console.log(
+      "Welcome to our store! Please have a look aorund and feel free to purchase any items you may need!"
+    );
     thePurchase();
   });
 }
@@ -48,21 +52,20 @@ function thePurchase() {
     ])
     .then(function(answers) {
       connection.query(
-        "SELECT stock_quantity FROM products WHERE ?",
+        "SELECT * FROM products WHERE ?",
         { id: answers.item },
         function(err, res) {
           if (err) throw err;
           var enoughSupply = false;
           var currentStockQuantity;
+          var price;
           for (var i = 0; i < res.length; i++) {
             currentStockQuantity = res[i].stock_quantity;
+            price = res[i].price;
             if (currentStockQuantity >= answers.numberOfItems) {
               enoughSupply = true;
-              console.log("Row equals", currentStockQuantity);
             }
           }
-          console.log("isEnoughSupply = ", enoughSupply);
-          console.log("res = ", res);
           if (enoughSupply === true) {
             connection.query(
               "UPDATE products SET ? WHERE ?",
@@ -76,29 +79,20 @@ function thePurchase() {
               ],
               function(err, res) {
                 if (!err) {
-                  console.log("Congratulations on your purchase!");
+                  console.log(
+                    "Congratulations on your purchase! Your total was $" +
+                      answers.numberOfItems * price +
+                      "."
+                  );
+                  connection.end();
                 } else {
                   console.log("We have insufficient supply for your order.");
+                  connetion.end();
                 }
               }
             );
           }
         }
       );
-
-      //
-      //               function(error) {
-      //                 if (error) throw err;
-      //                 console.log("Congratulations on your purchase!");
-      //                 runApplication();
-      //               }
-      //             );
-      //           } else {
-      //             //inform them stock quantity was too low for purchase
-      //             console.log("We do not have enough supply for your purchase.");
-      //             runApplication();
-      //           }
-      //         });
-      //     ;
     });
 }
