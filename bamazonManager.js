@@ -51,50 +51,6 @@ function listOptions() {
         case "Add New Product":
           return addNewProduct();
       }
-      //   connection.query(
-      //     "SELECT * FROM products WHERE ?",
-      //     { id: answers.item },
-      //     function(err, res) {
-      //       if (err) throw err;
-      //       var enoughSupply = false;
-      //       var currentStockQuantity;
-      //       var price;
-      //       for (var i = 0; i < res.length; i++) {
-      //         currentStockQuantity = res[i].stock_quantity;
-      //         price = res[i].price;
-      //         if (currentStockQuantity >= answers.numberOfItems) {
-      //           enoughSupply = true;
-      //         }
-      //       }
-      //       if (enoughSupply === true) {
-      //         connection.query(
-      //           "UPDATE products SET ? WHERE ?",
-      //           [
-      //             {
-      //               stock_quantity: currentStockQuantity - answers.numberOfItems
-      //             },
-      //             {
-      //               id: answers.item
-      //             }
-      //           ],
-      //           function(err, res) {
-      //             if (!err) {
-      //               console.log(
-      //                 "Congratulations on your purchase! Your total was $" +
-      //                   answers.numberOfItems * price +
-      //                   "."
-      //               );
-      //               connection.end();
-      //             } else {
-      //               console.log("We have insufficient supply for your order.");
-      //               connetion.end();
-      //             }
-      //           }
-      //         );
-      //       }
-      //     }
-      //   );
-      // });
     });
 
   function productsForSale() {
@@ -154,10 +110,6 @@ function listOptions() {
           connection.query(
             "SELECT * FROM products WHERE ?",
             { id: answers.item },
-            // "UPDATE products SET ? WHERE ?",[
-            //   {stock_quantity = currentStockQuantity + answers.inventoryAdd},
-            //   { id: answers.item }
-            // ],
             function(err, res) {
               if (err) throw err;
               var newStockQuantity;
@@ -230,24 +182,25 @@ function listOptions() {
         connection.query(
           "INSERT INTO products SET ?",
           {
-            id: id,
-            product_name: productName,
-            department_name: department,
-            price: price,
-            stock_quantity: stockQuantity
+            id: answers.id,
+            product_name: answers.productName,
+            department_name: answers.department,
+            price: answers.price,
+            stock_quantity: answers.stockQuantity
           },
           function(err, res) {
             if (err) throw err;
             if (!err) {
               console.log("Your product has been added to the store!");
+              connection.end();
             } else {
               console.log(
                 "Technical difficulties have occurred. Please try to add your item at a later date."
               );
+              connection.end();
             }
           }
         );
       });
   }
-  connection.end();
 }
